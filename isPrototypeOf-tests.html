@@ -1,0 +1,56 @@
+<script src="../isPrototypeOf-master/simpletest.js"></script>
+<script src="../isPrototypeOf-master/isPrototypeOf.js"></script>
+<script>
+    var cLepophagus = {
+        walk: function () {
+            console.log("(walks)");
+        }
+    };
+
+    var wolf = Object.create(cLepophagus);
+    wolf.howl = function () {
+        console.log("(howls)");
+    }
+
+    var dog = Object.create(wolf);
+    dog.beg = function () {
+        console.log("(begs)");
+    }
+
+    var empty = Object.create(null);
+
+    tests({
+        '(1) Function should return true if object is in prototype chain of possibleInstance': function () {
+            eq(isPrototypeOf(cLepophagus, wolf), true);
+            eq(isPrototypeOf(wolf, dog), true);
+            eq(isPrototypeOf(cLepophagus, dog), true);
+        },
+        '(2) Function should return false if object is not in prototype chain of possibleInstance': function () {
+            eq(isPrototypeOf(wolf, cLepophagus), false);
+            eq(isPrototypeOf(dog, wolf), false);
+            eq(isPrototypeOf(dog, cLepophagus), false);
+            eq(isPrototypeOf(cLepophagus, empty), false);
+            eq(isPrototypeOf(wolf, empty), false);
+            eq(isPrototypeOf(dog, empty), false);
+        },
+        '(3) Returns true when `Object.prototype` is passed in as object': function () {
+            eq(isPrototypeOf(Object.prototype, cLepophagus), true);
+            eq(isPrototypeOf(Object.prototype, wolf), true);
+            eq(isPrototypeOf(Object.prototype, dog), true);
+        },
+        '(4) Throws reference error if object is undefined': function () {
+            try {
+                isPrototypeOf(nada, dog)
+            } catch (e) {
+                eq(e instanceof ReferenceError, true)
+            }
+        },
+        '(5) Throws reference error if possibleInstance is undefined': function () {
+            try {
+                isPrototypeOf(wolf, nada)
+            } catch (e) {
+                eq(e instanceof ReferenceError, true)
+            }
+        }
+    });
+</script>
